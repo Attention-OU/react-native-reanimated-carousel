@@ -65,7 +65,7 @@ const IScrollViewGesture: React.FC<PropsWithChildren<Props>> = (props) => {
   const maxPage = dataLength;
   const isHorizontal = useDerivedValue(() => !vertical, [vertical]);
   const max = useSharedValue(0);
-  const panOffset = useSharedValue(0);
+  const panOffset = useSharedValue<number | undefined>(undefined);
   const touching = useSharedValue(false);
   const validStart = useSharedValue(false);
   const scrollEndTranslation = useSharedValue(0);
@@ -290,6 +290,10 @@ const IScrollViewGesture: React.FC<PropsWithChildren<Props>> = (props) => {
   const onGestureUpdate = useCallback((e: PanGestureHandlerEventPayload) => {
     "worklet";
 
+    if (panOffset.value === undefined) {
+      return;
+    }
+
     if (validStart.value) {
       validStart.value = false;
       cancelAnimation(translation);
@@ -333,6 +337,10 @@ const IScrollViewGesture: React.FC<PropsWithChildren<Props>> = (props) => {
 
   const onGestureEnd = useCallback((e: GestureStateChangeEvent<PanGestureHandlerEventPayload>, _success: boolean) => {
     "worklet";
+
+    if (panOffset.value === undefined) {
+      return;
+    }
 
     const { velocityX, velocityY, translationX, translationY } = e;
     scrollEndVelocity.value = isHorizontal.value
@@ -379,6 +387,7 @@ const IScrollViewGesture: React.FC<PropsWithChildren<Props>> = (props) => {
 
     if (!loop)
       touching.value = false;
+      panOffset.value = undefined;
   }, [
     size,
     loop,
