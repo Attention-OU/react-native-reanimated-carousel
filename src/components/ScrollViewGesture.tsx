@@ -116,10 +116,13 @@ const IScrollViewGesture: React.FC<PropsWithChildren<Props>> = (props) => {
   );
 
   const endWithSpring = React.useCallback(
-    (onFinished?: () => void) => {
+    (scrollEndTranslationValue: number,
+      scrollEndVelocityValue: number,
+      onFinished?: () => void,
+    )  => {
       "worklet";
       const origin = translation.value;
-      const velocity = scrollEndVelocity.value;
+      const velocity = scrollEndVelocityValue;
       // Default to scroll in the direction of the slide (with deceleration)
       let finalTranslation: number = withDecay({ velocity, deceleration: 0.999 });
 
